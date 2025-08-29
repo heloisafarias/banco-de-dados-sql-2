@@ -1,0 +1,43 @@
+-- 1. Adicionar novas colunas
+ALTER TABLE customers ADD COLUMN email TEXT;
+ALTER TABLE customers ADD COLUMN phone TEXT;
+ALTER TABLE customers ADD COLUMN age INTEGER;
+ALTER TABLE customers ADD COLUMN status TEXT;
+
+-- 2. Preencher valores fictícios
+UPDATE customers
+SET email = CASE
+    WHEN id % 2 = 0 THEN 'cliente' || id || '@exemplo.com'
+    ELSE NULL
+END,
+phone = CASE
+    WHEN id % 3 = 0 THEN '(11) 9' || printf('%08d', id * 123)
+    ELSE NULL
+END,
+age = 18 + (id % 50),
+status = CASE
+    WHEN id % 4 = 0 THEN 'Ativo'
+    WHEN id % 4 = 1 THEN 'Inativo'
+    WHEN id % 4 = 2 THEN 'Pendente'
+    ELSE NULL
+END;
+
+ALTER TABLE orders ADD COLUMN desconto REAL DEFAULT 0;
+ALTER TABLE orders ADD COLUMN status TEXT;
+ALTER TABLE orders ADD COLUMN nota_avaliacao INTEGER;
+
+INSERT INTO customers (nome, estado, dt_cadastro, email, phone, age, status) VALUES
+('Paulo Santos', 'SP', '2024-05-01', 'paulo.santos@email.com', '(11) 99999-1111', 30, 'Ativo'),
+('Carla Dias', 'RJ', '2024-06-10', 'carla.dias@email.com', NULL, 25, 'Inativo'),   -- telefone NULL
+('Rodrigo Costa', 'MG', '2024-07-15', NULL, '(31) 98888-2222', 40, 'Pendente'),     -- email NULL
+('Fernanda Lima', 'SP', '2024-08-01', 'fernanda@email.com', '(41) 97777-3333', 28, 'Ativo'),
+('Gustavo Oliveira', 'PR', '2024-09-05', NULL, NULL, 35, 'Ativo');   
+
+INSERT INTO orders (customer_id, dt_pedido, valor_total, desconto, status, nota_avaliacao) VALUES
+(6, '2025-08-10', 350.00, 5, 'Entregue', 4),
+(7, '2025-08-11', 0.00, 10, 'Pendente', 3),
+(8, '2025-08-12', 150.00, 5, 'Cancelado', 2),
+(9, '2025-08-13', 200.00, 5, 'Entregue', 5),
+(10, '2025-08-14', 0.00, 0, 'Pendente', 2),
+(6, '2025-08-15', 500.00, 10, 'Entregue', 4),
+(8, '2025-08-16', 600.00, 5, 'Entregue', 5);
